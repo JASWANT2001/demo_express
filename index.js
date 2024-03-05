@@ -2,7 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const { MongoClient, Long, ObjectId } = require("mongodb");
 const dotenv = require("dotenv").config();
-const URL = process.env.DB
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const URL = process.env.DB;
 const app = express();
 app.use(express.json());
 app.use(
@@ -11,7 +13,28 @@ app.use(
   })
 );
 
-app.get("/", async (req, res) => {
+function authorize(req, res, next) {
+  if (req.headers.authorization) {
+    try {
+      const verify = jwt.verify(
+        req.headers.authorization,
+        process.env.SECRETKEY
+      );
+      if (verify) {
+        next();
+      } else {
+        res.status(401).json({ message: "Unauthorized" });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(401).json({ message: "Unauthorized" });
+    }
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+}
+
+app.get("/",authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -23,7 +46,7 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.post("/", async (req, res) => {
+app.post("/",authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -36,7 +59,7 @@ app.post("/", async (req, res) => {
   }
 });
 
-app.get("/:id", async (req, res) => {
+app.get("/:id",authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -49,7 +72,7 @@ app.get("/:id", async (req, res) => {
   }
 });
 
-app.put("/:id", async (req, res) => {
+app.put("/:id",authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -65,7 +88,7 @@ app.put("/:id", async (req, res) => {
   }
 });
 
-app.delete("/:id", async (req, res) => {
+app.delete("/:id",authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -78,6 +101,49 @@ app.delete("/:id", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+app.post("/register", async (req, res) => {
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(req.body.password, salt);
+    req.body.password = hash;
+    const connection = await MongoClient.connect(URL);
+    const db = connection.db("sbadmin");
+    const newuser = await db.collection("admindata").insertOne(req.body);
+    await connection.close();
+    res.json({ message: "User registered successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const connection = await MongoClient.connect(URL);
+    const db = connection.db("sbadmin");
+    const loginuser = await db
+      .collection("admindata")
+      .findOne({ email: req.body.email });
+    if (loginuser) {
+      const password = bcrypt.compareSync(
+        req.body.password,
+        loginuser.password
+      );
+      if (password) {
+        const token = jwt.sign({ id: loginuser._id }, process.env.SECRETKEY);
+        res.json({ message: "Login Success", token });
+      } else {
+        res.status(500).json({ message: "Password Incorrect" });
+      }
+    } else {
+      res.status(401).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status.json({ message: "Something went wrong" });
   }
 });
 
