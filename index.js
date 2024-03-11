@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://sb-admin-beta.vercel.app",
+    origin: ["https://sb-admin-beta.vercel.app", "http://localhost:3000"],
   })
 );
 
@@ -34,7 +34,7 @@ function authorize(req, res, next) {
   }
 }
 
-app.get("/",authorize, async (req, res) => {
+app.get("/", authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -46,7 +46,7 @@ app.get("/",authorize, async (req, res) => {
   }
 });
 
-app.post("/",authorize, async (req, res) => {
+app.post("/", authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -59,7 +59,7 @@ app.post("/",authorize, async (req, res) => {
   }
 });
 
-app.get("/:id",authorize, async (req, res) => {
+app.get("/:id", authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -72,7 +72,7 @@ app.get("/:id",authorize, async (req, res) => {
   }
 });
 
-app.put("/:id",authorize, async (req, res) => {
+app.put("/:id", authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -88,7 +88,7 @@ app.put("/:id",authorize, async (req, res) => {
   }
 });
 
-app.delete("/:id",authorize, async (req, res) => {
+app.delete("/:id", authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
