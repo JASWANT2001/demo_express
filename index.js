@@ -34,7 +34,7 @@ function authorize(req, res, next) {
   }
 }
 
-app.get("/",  async (req, res) => {
+app.get("/", async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -46,7 +46,7 @@ app.get("/",  async (req, res) => {
   }
 });
 
-app.post("/",  async (req, res) => {
+app.post("/", async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -59,7 +59,7 @@ app.post("/",  async (req, res) => {
   }
 });
 
-app.get("/:id",  async (req, res) => {
+app.get("/:id", async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -72,7 +72,7 @@ app.get("/:id",  async (req, res) => {
   }
 });
 
-app.put("/:id",  async (req, res) => {
+app.put("/:id", async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -88,7 +88,7 @@ app.put("/:id",  async (req, res) => {
   }
 });
 
-app.delete("/:id",  async (req, res) => {
+app.delete("/:id", async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -127,6 +127,7 @@ app.post("/login", async (req, res) => {
     const loginuser = await db
       .collection("admindata")
       .findOne({ email: req.body.email });
+    // console.log(loginuser);
     if (loginuser) {
       const password = bcrypt.compareSync(
         req.body.password,
@@ -134,7 +135,7 @@ app.post("/login", async (req, res) => {
       );
       if (password) {
         const token = jwt.sign({ id: loginuser._id }, process.env.SECRETKEY);
-        res.json({ message: "Login Success", token });
+        res.json({ message: "Login Success", token, loginuser });
       } else {
         res.status(500).json({ message: "Password Incorrect" });
       }
@@ -143,7 +144,7 @@ app.post("/login", async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status.json({ message: "Something went wrong" });
+    res.status(401).json({ message: "Something went wrong" });
   }
 });
 
