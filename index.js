@@ -61,14 +61,14 @@ app.post("/", async (req, res) => {
 
 app.post("/job", async (req, res) => {
   try {
-    const connection = await MongoClient.connect("URL");
+    const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
     const obj = await db.collection("jobdata").insertOne(req.body);
     await connection.close();
     res.json({ message: "Job Inserted Success" });
   } catch (error) {
     console.log(error);
-    res.status(404).json({ message: "Something went wrong" });
+    res.status(500).json({ message: "Something went wrong" });
   }
 });
 
