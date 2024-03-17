@@ -170,7 +170,7 @@ app.get("/job", async (req, res) => {
     res.json(objdata);
   } catch (error) {
     console.log(error); // Log the specific error
-    res.status(500).json({ message: "Something Went Wrong1" });
+    res.status(404).json({ message: "Something Went Wrong" });
   }
 });
 
