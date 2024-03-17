@@ -165,11 +165,11 @@ app.get("/job", async (req, res) => {
   try {
     const connection = await MongoClient.connect("URL");
     const db = connection.db("sbadmin");
-    const objdata = await db.collection("jobdata").find().toArray(); // Fix: Added toArray() method
+    const objdata = await db.collection("jobdata").find().toArray(); 
     await connection.close();
     res.json(objdata);
   } catch (error) {
-    console.log(error); // Log the specific error
+    console.log(error); 
     res.status(404).json({ message: "Something Went Wrong" });
   }
 });
