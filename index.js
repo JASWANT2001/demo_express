@@ -165,12 +165,28 @@ app.get("/job", async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
-    const objdata = await db.collection("jobdata").find().toArray(); 
+    const objdata = await db.collection("jobdata").find().toArray();
     await connection.close();
     res.json(objdata);
   } catch (error) {
-    console.log(error); 
+    console.log(error);
     res.status(404).json({ message: "Something Went Wrong" });
+  }
+});
+
+app.delete("/job/:id", async (req, res) => {
+  try {
+    const connection = await MongoClient.connect(URL);
+    const db = connection.db("sbadmin");
+    const objectid = new ObjectId(req.params.id);
+    const objdelete = await db
+      .collection("jobdata")
+      .deleteOne({ _id: objectid });
+    await connection.close();
+    res.json({ message: "Job Data Deleted Success" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong" });
   }
 });
 
