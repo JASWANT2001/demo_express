@@ -34,7 +34,7 @@ function authorize(req, res, next) {
   }
 }
 
-app.get("/", async (req, res) => {
+app.get("/employee", async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -42,11 +42,11 @@ app.get("/", async (req, res) => {
     await connection.close();
     res.json(array);
   } catch (error) {
-    res.status(500).json("Something went wrong");
+    res.status(500).json({ message: "Something Went Wrong" });
   }
 });
 
-app.post("/", async (req, res) => {
+app.post("/employee", async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -59,20 +59,7 @@ app.post("/", async (req, res) => {
   }
 });
 
-app.post("/job", async (req, res) => {
-  try {
-    const connection = await MongoClient.connect(URL);
-    const db = connection.db("sbadmin");
-    const obj = await db.collection("jobdata").insertOne(req.body);
-    await connection.close();
-    res.json({ message: "Job Inserted Success" });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Something went wrong" });
-  }
-});
-
-app.get("/:id", async (req, res) => {
+app.get("/employee/:id", async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -81,11 +68,11 @@ app.get("/:id", async (req, res) => {
     connection.close();
     res.json(obj);
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong" });
+    res.status(500).json({ message: "Something went wrong2" });
   }
 });
 
-app.put("/:id", async (req, res) => {
+app.put("/employee/:id", async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -101,7 +88,7 @@ app.put("/:id", async (req, res) => {
   }
 });
 
-app.delete("/:id", async (req, res) => {
+app.delete("/employee/:id", async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -150,7 +137,7 @@ app.post("/login", async (req, res) => {
         const token = jwt.sign({ id: loginuser._id }, process.env.SECRETKEY);
         res.json({ message: "Login Success", token, loginuser });
       } else {
-        res.status(500).json({ message: "Password Incorrect" });
+        res.status(401).json({ message: "Password Incorrect" });
       }
     } else {
       res.status(401).json({ message: "User not found" });
@@ -158,6 +145,32 @@ app.post("/login", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(401).json({ message: "Something went wrong" });
+  }
+});
+
+app.post("/job", async (req, res) => {
+  try {
+    const connection = await MongoClient.connect(URL);
+    const db = connection.db("sbadmin");
+    const obj = await db.collection("jobdata").insertOne(req.body);
+    await connection.close();
+    res.json({ message: "Job Inserted Success" });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ message: "Something went wrong" });
+  }
+});
+
+app.get("/job", async (req, res) => {
+  try {
+    const connection = await MongoClient.connect("URL");
+    const db = connection.db("sbadmin");
+    const objdata = await db.collection("jobdata").find().toArray(); // Fix: Added toArray() method
+    await connection.close();
+    res.json(objdata);
+  } catch (error) {
+    console.log(error); // Log the specific error
+    res.status(500).json({ message: "Something Went Wrong1" });
   }
 });
 
