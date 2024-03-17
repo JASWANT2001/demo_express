@@ -150,7 +150,7 @@ app.post("/login", async (req, res) => {
 
 app.post("/job", async (req, res) => {
   try {
-    const connection = await MongoClient.connect("URL");
+    const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
     const obj = await db.collection("jobdata").insertOne(req.body);
     await connection.close();
@@ -163,7 +163,7 @@ app.post("/job", async (req, res) => {
 
 app.get("/job", async (req, res) => {
   try {
-    const connection = await MongoClient.connect("URL");
+    const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
     const objdata = await db.collection("jobdata").find().toArray(); 
     await connection.close();
