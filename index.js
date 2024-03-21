@@ -34,7 +34,7 @@ function authorize(req, res, next) {
   }
 }
 
-app.get("/employee", async (req, res) => {
+app.get("/employee", authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -46,7 +46,7 @@ app.get("/employee", async (req, res) => {
   }
 });
 
-app.post("/employee", async (req, res) => {
+app.post("/employee", authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -59,7 +59,7 @@ app.post("/employee", async (req, res) => {
   }
 });
 
-app.get("/employee/:id", async (req, res) => {
+app.get("/employee/:id", authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -72,7 +72,7 @@ app.get("/employee/:id", async (req, res) => {
   }
 });
 
-app.put("/employee/:id", async (req, res) => {
+app.put("/employee/:id", authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -88,7 +88,7 @@ app.put("/employee/:id", async (req, res) => {
   }
 });
 
-app.delete("/employee/:id", async (req, res) => {
+app.delete("/employee/:id", authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -148,7 +148,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/job", async (req, res) => {
+app.post("/job", authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -161,7 +161,7 @@ app.post("/job", async (req, res) => {
   }
 });
 
-app.get("/job", async (req, res) => {
+app.get("/job", authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
@@ -174,7 +174,7 @@ app.get("/job", async (req, res) => {
   }
 });
 
-app.delete("/job/:id", async (req, res) => {
+app.delete("/job/:id", authorize, async (req, res) => {
   try {
     const connection = await MongoClient.connect(URL);
     const db = connection.db("sbadmin");
